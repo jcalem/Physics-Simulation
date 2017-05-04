@@ -14,11 +14,11 @@ import javax.swing.JPanel;
 
 public class Main extends JPanel implements Runnable, KeyListener, MouseWheelListener {
 
-	private static final String title = "End of Year Project";
+	private static final String title = "Collision Simulation";
 	public static final double WIDTH = 1280;
 	public static final double HEIGHT = 720;
-	public static final double SCALE = Math.sqrt(3) / 2;
-
+	public static final int NUM = 20;
+	public static Ball[] balls = new Ball[NUM];
 	public static void main(String[] args) {
 
 		JFrame frame = new JFrame();
@@ -34,15 +34,12 @@ public class Main extends JPanel implements Runnable, KeyListener, MouseWheelLis
 	private boolean isRunning = false;
 	private Thread thread;
 
-	private boolean movingRight = false;
-	private boolean movingLeft = false;
-	private boolean movingUp = false;
-	private boolean movingDown = false;
-
-
 	public Main() {
 
 		setFocusable(true);
+		for(int i = 0; i < balls.length; i++){
+			balls[i] = new Ball(640, 360, 50);
+		}
 		start();
 	}
 
@@ -74,12 +71,26 @@ public class Main extends JPanel implements Runnable, KeyListener, MouseWheelLis
 	}
 
 	private void tick() {
-
+		for(int i = 0; i < balls.length; i++){
+			balls[i].setX(balls[i].getX() + balls[i].getDx());
+			balls[i].setY(balls[i].getY() + balls[i].getDy());
+			if(balls[i].getX() <= 0 || balls[i].getX() >= WIDTH - balls[i].getRadius()) balls[i].setDx(balls[i].getDx() * - 1);
+			if(balls[i].getY() <= 0|| balls[i].getY() >= HEIGHT - 75) balls[i].setDy(balls[i].getDy() * - 1);
+		}
+		try {
+			Thread.sleep(5);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void paintComponent(Graphics g) {
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, (int)WIDTH, (int)HEIGHT);
+		for(int i = 0; i < balls.length; i++){
+			balls[i].draw(g);
+		}
 	}
 
 	public void keyTyped(KeyEvent e) {
